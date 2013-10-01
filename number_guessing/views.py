@@ -11,22 +11,19 @@ def index(request):
 def start_game(request):
     request.session[ATTEMPT_COUNTER] = 0
     number = randint(0 ,4)
-    print number
     request.session[NUMBER_TO_GUESS] = randint(0 ,4)
     return redirect('/guess/play')
     
 
 def play(request, choice = None):
-    request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
-    
-    if request.session[ATTEMPT_COUNTER] == 1:
+    if request.session[ATTEMPT_COUNTER] == 0:
+        request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
         return render(request, 'number_guessing/play.html', {'numbers': range(5)})
     else:
-        print request.session['NUMBER_TO_GUESS']
         selected_choice = request.POST['choice']
     
     guess = int(selected_choice)
-    number_to_guess = request.session[NUMBER_TO_GUESS]
+    number_to_guess = int(request.session[NUMBER_TO_GUESS])
     message = ''
     
     if guess == number_to_guess:
@@ -35,7 +32,8 @@ def play(request, choice = None):
         message = '%d is lower than the secret number!' % guess
     else:
         message = '%d is higher than the secret number!' % guess
-        
+    
+    request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
         
     return render(request, 'number_guessing/play.html', {'numbers': range(5), 'message' : message})
     
@@ -45,6 +43,5 @@ def success(request):
     if attempts == 1:
         message = 'You\'ve needed only one attempt!'
     else:
-        message = 'You\'ve needed %d attempt!' % attempts
-    print message
+        message = 'You\'ve needed %d attempts!' % attempts
     return render(request, 'number_guessing/success.html', {'message' : message})
