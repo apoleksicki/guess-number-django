@@ -1,3 +1,4 @@
+{% if message %}<p><strong>{{ message }}</strong><p>{% endif %}
 
 <form action="/guess/play/" method="post">
 {% csrf_token %}

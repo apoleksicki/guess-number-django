@@ -1,19 +1,18 @@
 from django.shortcuts import render, redirect
-from django.http.response import HttpResponse, HttpResponseRedirect,\
-    HttpResponseRedirectBase
+from random import randint
 
 ATTEMPT_COUNTER = 'ATTEMPT_COUNTER'
 NUMBER_TO_GUESS = 'NUMBER_TO_GUESS' 
 
 
 def index(request):
-    print 'bar'
     return render(request, 'number_guessing/index.html')
 
 def start_game(request):
     request.session[ATTEMPT_COUNTER] = 0
-    request.session[NUMBER_TO_GUESS] = 2
-    print 'foo'
+    number = randint(0 ,4)
+    print number
+    request.session[NUMBER_TO_GUESS] = randint(0 ,4)
     return redirect('/guess/play')
     
 
@@ -26,11 +25,26 @@ def play(request, choice = None):
         print request.session['NUMBER_TO_GUESS']
         selected_choice = request.POST['choice']
     
+    guess = int(selected_choice)
+    number_to_guess = request.session[NUMBER_TO_GUESS]
+    message = ''
     
-    if int(selected_choice) == 2:
-        return render(request, 'number_guessing/success.html')
-    else: 
-        return render(request, 'number_guessing/play.html', {'numbers': range(5)})
+    if guess == number_to_guess:
+        return redirect('/guess/success')
+    elif guess < number_to_guess:
+        message = '%d is lower than the secret number!' % guess
+    else:
+        message = '%d is higher than the secret number!' % guess
+        
+        
+    return render(request, 'number_guessing/play.html', {'numbers': range(5), 'message' : message})
     
 def success(request):
-    return render(request, 'number_guessing/success.html')
+    attempts = int(request.session[ATTEMPT_COUNTER])
+    message = ''
+    if attempts == 1:
+        message = 'You\'ve needed only one attempt!'
+    else:
+        message = 'You\'ve needed %d attempt!' % attempts
+    print message
+    return render(request, 'number_guessing/success.html', {'message' : message})
