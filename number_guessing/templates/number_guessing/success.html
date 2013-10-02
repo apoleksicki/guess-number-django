@@ -1,5 +1,13 @@
-<h1>Congratulations! You've guessed the right number!</h1>
+{% load staticfiles %}
 
-<h2>{{ message }}</h2>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+</head>
 
-<a href="/guess/start_game">Play again</a>
+<body>
+	<h1>Congratulations! You've guessed the right number!</h1>
+	
+	<h2>{{ message }}</h2>
+	
+	<a href="/guess/start_game">Play again</a>
+</body>

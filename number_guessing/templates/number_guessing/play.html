@@ -1,10 +1,18 @@
-{% if message %}<p><strong>{{ message }}</strong><p>{% endif %}
+{% load staticfiles %}
 
-<form action="/guess/play/" method="post">
-{% csrf_token %}
-{% for number in numbers %}
-	<input type="radio" name="choice" id="{{ forloop.counter }}" value="{{ number }}"/>
-	<label for="choice{{ forloop.counter }}">{{ number }}</label><br />
-{% endfor %}
-<input type="submit" value="Submit your guess!" />
-</form>
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+</head>
+
+<body>
+	{% if message %}<p><strong>{{ message }}</strong><p>{% endif %}
+	
+	<form action="/guess/play/" method="post">
+	{% csrf_token %}
+	{% for number in numbers %}
+		<input type="radio" name="choice" id="{{ forloop.counter }}" value="{{ number }}"/>
+		<label for="choice{{ forloop.counter }}">{{ number }}</label><br />
+	{% endfor %}
+	<input type="submit" value="Submit your guess!" />
+	</form>
+</body>
