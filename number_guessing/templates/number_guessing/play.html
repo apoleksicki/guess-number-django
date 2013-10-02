@@ -7,6 +7,13 @@
 <body>
 	{% if message %}<p><strong>{{ message }}</strong><p>{% endif %}
 	
+	{% if past_guesses %}<p>Your past guesses
+	[ {% for guess in past_guesses%}
+		<span class="{% if guess.1 %}high{% else %}low{% endif %}" > {{ guess.0 }}</span> 
+	{% endfor %} ]
+	</p>
+	{% endif %}
+	
 	<form action="/guess/play/" method="post">
 	{% csrf_token %}
 	{{ form.as_p }}

@@ -3,7 +3,8 @@ from random import randint
 from number_guessing.forms import GuessForm
 
 ATTEMPT_COUNTER = 'ATTEMPT_COUNTER'
-NUMBER_TO_GUESS = 'NUMBER_TO_GUESS' 
+NUMBER_TO_GUESS = 'NUMBER_TO_GUESS'
+PAST_GUESSES = 'PAST_GUESSES'  
 NUM_CHOICES = 10
 
 
@@ -14,6 +15,7 @@ def start_game(request):
     request.session[ATTEMPT_COUNTER] = None
     request.session[NUMBER_TO_GUESS] = randint(0, NUM_CHOICES - 1)
     request.session[ATTEMPT_COUNTER] = 1
+    request.session[PAST_GUESSES] = []
     return redirect('/guess/play')
 
 def play(request):
@@ -29,10 +31,12 @@ def play(request):
         
         message = _generate_hint(guess, number_to_guess)
         request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
+        request.session[PAST_GUESSES].append((guess, guess > number_to_guess))
         
     return render(request, 'number_guessing/play.html', 
                   {'form' : form, 
-                   'message' : message})
+                   'message' : message,
+                   'past_guesses' : request.session[PAST_GUESSES]})
 
 def _generate_hint(guess, secret):
     if guess < secret:
