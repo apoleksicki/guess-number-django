@@ -4,7 +4,7 @@ from number_guessing.forms import GuessForm
 
 ATTEMPT_COUNTER = 'ATTEMPT_COUNTER'
 NUMBER_TO_GUESS = 'NUMBER_TO_GUESS' 
-MAX_NUM = 4
+NUM_CHOICES = 10
 
 
 def index(request):
@@ -12,12 +12,12 @@ def index(request):
 
 def start_game(request):
     request.session[ATTEMPT_COUNTER] = None
-    request.session[NUMBER_TO_GUESS] = randint(0, MAX_NUM)
+    request.session[NUMBER_TO_GUESS] = randint(0, NUM_CHOICES - 1)
     request.session[ATTEMPT_COUNTER] = 1
     return redirect('/guess/play')
 
 def play(request):
-    form = GuessForm(request.POST) if request.POST else GuessForm()
+    form = GuessForm(request.POST, num_choices = NUM_CHOICES) if request.POST else GuessForm(num_choices = NUM_CHOICES)
     message = ''
     
     if form.is_valid():
