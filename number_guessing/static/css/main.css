@@ -7,3 +7,7 @@ body {
 h1 {
     font-size: 30pt;
 }
+
+form ul {
+    list-style-type: none;
+}
