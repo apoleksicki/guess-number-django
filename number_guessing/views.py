@@ -19,22 +19,24 @@ def play(request):
         request.session[NUMBER_TO_GUESS] = randint(0, MAX_NUM)
         return render(request, 'number_guessing/play.html', {'numbers': xrange(MAX_NUM + 1)})
     else:
-        selected_choice = request.POST['choice']
+        guess = int(request.POST['choice'])
 
-    guess = int(selected_choice)
     number_to_guess = int(request.session[NUMBER_TO_GUESS])
-    message = ''
     
     if guess == number_to_guess:
         return redirect('/guess/success')
-    elif guess < number_to_guess:
-        message = '%d is lower than the secret number!' % guess
-    else:
-        message = '%d is higher than the secret number!' % guess
     
     request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
         
-    return render(request, 'number_guessing/play.html', {'numbers': xrange(MAX_NUM + 1), 'message' : message})
+    return render(request, 'number_guessing/play.html', 
+                  {'numbers': xrange(MAX_NUM + 1), 
+                   'message' : _generate_hint(guess, number_to_guess)})
+
+def _generate_hint(guess, secret):
+    if guess < secret:
+        return '%d is lower than the secret number!' % guess
+    else:
+        return '%d is higher than the secret number!' % guess
     
 def success(request):
     attempts = int(request.session[ATTEMPT_COUNTER])
