@@ -12,18 +12,14 @@ def index(request):
 
 def start_game(request):
     request.session[ATTEMPT_COUNTER] = None
+    request.session[NUMBER_TO_GUESS] = randint(0, MAX_NUM)
+    request.session[ATTEMPT_COUNTER] = 1
     return redirect('/guess/play')
 
 def play(request):
     form = GuessForm(request.POST) if request.POST else GuessForm()
     message = ''
     
-    if not request.session[ATTEMPT_COUNTER]:
-        request.session[ATTEMPT_COUNTER] = 1
-        request.session[NUMBER_TO_GUESS] = randint(0, MAX_NUM)
-        return render(request, 'number_guessing/play.html', 
-                      {'form' : form})
-
     if form.is_valid():
         number_to_guess = int(request.session[NUMBER_TO_GUESS])
         guess = form.cleaned_data['choice']
