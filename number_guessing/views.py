@@ -10,7 +10,6 @@ def index(request):
 
 def start_game(request):
     request.session[ATTEMPT_COUNTER] = 0
-    number = randint(0 ,4)
     request.session[NUMBER_TO_GUESS] = randint(0 ,4)
     return redirect('/guess/play')
     
