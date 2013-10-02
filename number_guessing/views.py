@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from random import randint
+from number_guessing.forms import GuessForm
 
 ATTEMPT_COUNTER = 'ATTEMPT_COUNTER'
 NUMBER_TO_GUESS = 'NUMBER_TO_GUESS' 
@@ -14,23 +15,28 @@ def start_game(request):
     return redirect('/guess/play')
 
 def play(request):
+    form = GuessForm(request.POST) if request.POST else GuessForm()
+    message = ''
+    
     if not request.session[ATTEMPT_COUNTER]:
         request.session[ATTEMPT_COUNTER] = 1
         request.session[NUMBER_TO_GUESS] = randint(0, MAX_NUM)
-        return render(request, 'number_guessing/play.html', {'numbers': xrange(MAX_NUM + 1)})
-    else:
-        guess = int(request.POST['choice'])
+        return render(request, 'number_guessing/play.html', 
+                      {'form' : form})
 
-    number_to_guess = int(request.session[NUMBER_TO_GUESS])
-    
-    if guess == number_to_guess:
-        return redirect('/guess/success')
-    
-    request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
+    if form.is_valid():
+        number_to_guess = int(request.session[NUMBER_TO_GUESS])
+        guess = form.cleaned_data['choice']
+        
+        if guess == number_to_guess:
+            return redirect('/guess/success')
+        
+        message = _generate_hint(guess, number_to_guess)
+        request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
         
     return render(request, 'number_guessing/play.html', 
-                  {'numbers': xrange(MAX_NUM + 1), 
-                   'message' : _generate_hint(guess, number_to_guess)})
+                  {'form' : form, 
+                   'message' : message})
 
 def _generate_hint(guess, secret):
     if guess < secret:

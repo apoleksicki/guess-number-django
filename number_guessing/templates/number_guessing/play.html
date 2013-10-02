@@ -9,10 +9,7 @@
 	
 	<form action="/guess/play/" method="post">
 	{% csrf_token %}
-	{% for number in numbers %}
-		<input type="radio" name="choice" id="{{ forloop.counter }}" value="{{ number }}"/>
-		<label for="choice{{ forloop.counter }}">{{ number }}</label><br />
-	{% endfor %}
+	{{ form.as_p }}
 	<input type="submit" value="Submit your guess!" />
 	</form>
 </body>
