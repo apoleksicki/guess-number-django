@@ -9,5 +9,6 @@ class GuessForm(forms.Form):
     choice = forms.TypedChoiceField(coerce = int, 
                                     widget = forms.RadioSelect, 
                                     choices = [(str(x), str(x)) for x in xrange(5)], 
-                                    error_messages={'required': 'Please select a number'})
+                                    error_messages={'required': 'Please select a number'},
+                                    label='Make your guess:')
     
