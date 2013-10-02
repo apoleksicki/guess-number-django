@@ -3,24 +3,24 @@ from random import randint
 
 ATTEMPT_COUNTER = 'ATTEMPT_COUNTER'
 NUMBER_TO_GUESS = 'NUMBER_TO_GUESS' 
+MAX_NUM = 4
 
 
 def index(request):
     return render(request, 'number_guessing/index.html')
 
 def start_game(request):
-    request.session[ATTEMPT_COUNTER] = 0
-    request.session[NUMBER_TO_GUESS] = randint(0 ,4)
+    request.session[ATTEMPT_COUNTER] = None
     return redirect('/guess/play')
-    
 
-def play(request, choice = None):
-    if request.session[ATTEMPT_COUNTER] == 0:
-        request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
-        return render(request, 'number_guessing/play.html', {'numbers': range(5)})
+def play(request):
+    if not request.session[ATTEMPT_COUNTER]:
+        request.session[ATTEMPT_COUNTER] = 1
+        request.session[NUMBER_TO_GUESS] = randint(0, MAX_NUM)
+        return render(request, 'number_guessing/play.html', {'numbers': xrange(MAX_NUM + 1)})
     else:
         selected_choice = request.POST['choice']
-    
+
     guess = int(selected_choice)
     number_to_guess = int(request.session[NUMBER_TO_GUESS])
     message = ''
@@ -34,7 +34,7 @@ def play(request, choice = None):
     
     request.session[ATTEMPT_COUNTER] = int(request.session[ATTEMPT_COUNTER]) + 1
         
-    return render(request, 'number_guessing/play.html', {'numbers': range(5), 'message' : message})
+    return render(request, 'number_guessing/play.html', {'numbers': xrange(MAX_NUM + 1), 'message' : message})
     
 def success(request):
     attempts = int(request.session[ATTEMPT_COUNTER])
